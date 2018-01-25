@@ -1,5 +1,7 @@
+import com.vividsolutions.jts.io.ParseException;
 import convexhull.ConvexHull;
 import geometry.Point;
+import interpolation.DrawIDW;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.canvas.Canvas;
@@ -17,6 +19,8 @@ public class Controller implements Initializable{
     @FXML private Button createPointBtn;
     @FXML private TextField text;
     private GraphicsContext gc;
+    private Point[] outPoint;
+    private Point[] point; //randomPoint
 
     @Override
     public void initialize(URL location, ResourceBundle resources) {
@@ -31,7 +35,7 @@ public class Controller implements Initializable{
         gc.clearRect(0,0,canvas.getWidth(),canvas.getHeight());
         gc.setFill(Color.BLUE);
         //
-        Point[] point =new Point[count];
+        point =new Point[count];
         //draw point
         for(int a=0; a<count; a++){
             point[a] =new Point();
@@ -51,13 +55,22 @@ public class Controller implements Initializable{
             //gc.strokeOval(x,y,5,5);
             gc.fillOval(x,y,5,5);
         }
+        try{
+            drawConvexHull(point);
+            drawGrid();
+            drawGridPoint();
 
-        drawConvexHull(point);
-    }
+        }catch(ParseException parse){
+            System.out.println(parse);
+        }
+
+
+
+    }//end of draw(랜덤 포인트)
 
     void drawConvexHull(Point[] p){
         ConvexHull convexhull =new ConvexHull(p);
-        Point[] outPoint = convexhull.convex_hull();
+        outPoint = convexhull.convex_hull();
 
         gc.setStroke(Color.RED);
         gc.beginPath();
@@ -71,6 +84,37 @@ public class Controller implements Initializable{
 
         gc.stroke();
         gc.closePath();
+    }//end of drawConvexHull(외각선)
+
+    void drawGrid(){
+
+        gc.beginPath();
+
+        for(double a = 1; a< canvas.getWidth(); a=a+20){ //세로 라인
+            gc.moveTo(a,0);
+            gc.lineTo(a, canvas.getHeight());
+        }
+
+        for(double b = 1; b<canvas.getHeight(); b=b+20){
+            gc.moveTo(0,b);
+            gc.lineTo(canvas.getWidth(),b);
+        }
+        /*gc.moveTo(0,0);
+        gc.lineTo(canvas.getHeight(), canvas.getWidth());*/
+        gc.closePath();
+
+        gc.setStroke(Color.BLACK);
+        gc.stroke();
+    }
+    void drawGridPoint() throws ParseException {
+        DrawIDW idw =new DrawIDW();
+
+        idw.setCanvasSize(canvas.getHeight(), canvas.getWidth());
+        idw.setRandomPoint(point);
+        idw.setConvexHullPoly(outPoint);
+        gc = idw.drawGrid(gc);
+        idw.draw(gc);
+
 
 
     }

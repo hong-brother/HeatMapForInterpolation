@@ -22,6 +22,8 @@ public class ConvexHull {
     // wiki
     //https://en.wikibooks.org/wiki/Algorithm_Implementation/Geometry/Convex_hull/Monotone_chain
     private Point[] point;
+    private Point minPoint;
+    private Point maxPoint;
     public ConvexHull(Point[] p){
         this.point = p;
     }
@@ -54,6 +56,7 @@ public class ConvexHull {
                     }
                 }
             });
+
 
             for(int i=0; i<n; ++i){
                 while(k>=2 && crossProduct(H[k-2], H[k-1], point[i]) <= 0)
