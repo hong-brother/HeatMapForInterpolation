@@ -96,8 +96,9 @@ public class DrawIDW implements Interpolation {
 
 
             com.vividsolutions.jts.geom.Point anyPoint =(com.vividsolutions.jts.geom.Point) anyPoints.get(i);
+            double getValue = getValuePoint(anyPoint, pointDis1,pointDis2, pointDis3, pointValue1, pointValue2, pointValue3);
+            System.out.println(getValue);
 
-            //getValuePoint(oriPoints.get(i), pointDis1, pointDis2, pointDis3, pointValue1, pointValue2, pointValue3);
 
         }
 
